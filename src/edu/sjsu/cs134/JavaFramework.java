@@ -31,7 +31,7 @@ public class JavaFramework {
 	private static int[] spritePos = new int[] { 250, 299 };
 	private static int[] enemyPos = new int[] { 400, 300 };
 
-	// Texture for the sprite.
+	// Texture for the sprites.
 	private static int monkeyTex;
 	private static int monkeyStandingTex;
 	private static int enemyTex;
@@ -39,22 +39,26 @@ public class JavaFramework {
 	private static int enemyShootTex;
 	private static int monkeyProjectileTex;
 	private static int snailProjectileTex;
+	private static int skyTex;
+	private static int groundtex;
 
 	// Size of the sprite.
 	private static int[] spriteSize = new int[2];
 	private static int[] projectileSize = new int[2];
 
-	private static int skyTex;
-	private static int groundtex;
+	//Declare backgrounds
 	private static Background backgroundMain;
 	private static Background backgroundFloor;
 	private static Background platformA;
+	
+	//Size of the tiles
 	private static int[] tileSize = new int[2];
 	private static int backgroundCheck = 0;
 
-
+	//Initialize Camera
 	private static Camera camera = new Camera(0, 0);
 
+	//Size of game window resolution
 	private static final int xRes = 640;
 	private static final int yRes = 480;
 
@@ -115,6 +119,10 @@ public class JavaFramework {
 		monkeyProjectileTex = glTexImageTGAFile(gl, "assets/projectile_3.tga", projectileSize);
 		snailProjectileTex = glTexImageTGAFile(gl, "assets/enemy_projectile.tga", projectileSize);
 
+		/**
+		 * Putting textures into an Animation Frames array. These arrays are then put into an animation object which
+		 * is called when wanting to retrieve animations.
+		 */
 		AnimationFrames[] running = {
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_run1.tga", spriteSize), (float) 110),
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_run2.tga", spriteSize), (float) 100),
@@ -147,6 +155,7 @@ public class JavaFramework {
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail_run6.tga", spriteSize), (float) 100),
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail_run7.tga", spriteSize), (float) 100) };
 
+		//Animations
 		Animation runAnimation = new Animation(running);
 		Animation monkeyJumpAnimation = new Animation(monkeyJump);
 		Animation monkeyShootAnimation = new Animation(monkeyShoot);
@@ -160,24 +169,31 @@ public class JavaFramework {
 		backgroundMain = new Background(skyTex, true, 0, 150);
 		backgroundFloor = new Background(groundtex, false, 100, 150);
 
+		//Initialize characters in the game
 		Character monkey = new Character(spritePos[0], spritePos[1], spriteSize[0], spriteSize[1]);
 		Character snail = new Character(enemyPos[0], enemyPos[1], spriteSize[0], spriteSize[1]);
 
+		//Create a bounding box camera for both the monkey and camera
 		AABBCamera spriteAABB = new AABBCamera(spritePos[0], spritePos[1], spriteSize[0], spriteSize[1]);
 		AABBCamera cameraAABB = new AABBCamera(camera.getX(), camera.getY(), xRes, yRes);
 
+		//Frames
 		long lastFrame;
 		long currentFrame = System.nanoTime();
-		int standCount = 0;
 
 		int lastPhysicsFrameMs = 0;
 		long curFrameMs;
 		int physicsDeltaMs = 10;
 		
+		//Timer for standing for when to have standing texture
+		int standCount = 0;
+		//Timer so the player cant spam shooting
 		int shootTimer = 0;
+		//Previous positions of the monkey so it can't move through objects in a collision
 		int monkeyPreviousX = monkey.getX();
 		int monkeyPreviousY = monkey.getY();
 
+		//Arraylist of enemies since there will be multiple
 		ArrayList<Character> enemies = new ArrayList<Character>();
 		enemies.add(snail);
 		// The game loop
@@ -196,6 +212,11 @@ public class JavaFramework {
 			curFrameMs = currentFrame / 1000000;
 			long delta = (currentFrame - lastFrame) / 1000000;
 			
+			
+			/**
+			 * Code for having gravity affect the monkey. For some reason it works best in
+			 * this spot right before the physics loop. Will play jumping animation if monkey is jumping.
+			 */
 			if(monkey.isJumping()){
 				monkeyJumpAnimation.updateSprite(delta);
 				monkeyTex = monkeyJumpAnimation.getCurrentFrame();
@@ -207,8 +228,12 @@ public class JavaFramework {
 				monkey.setyVelocity(monkey.getyVelocity() + monkey.getAcceleration());
 			}
 			
-			// AI
+			//The physics loop
 			do {
+				/**
+				 * Check to see if a projectile of the monkey's is hitting an enemy
+				 * If it is, we remove the projectile and subtract health from the enemy.
+				 */
 				for (int i = 0; i < monkey.getProjectiles().size(); i++) {
 					ArrayList<Projectile> mainCharProj = (ArrayList<Projectile>) monkey.getProjectiles();
 					Projectile p = mainCharProj.get(i);
@@ -225,6 +250,10 @@ public class JavaFramework {
 						}
 					}
 				}
+				/**
+				 * Similar to the loop above but for enemy projectiles. If the monkey is hit, the monkey's is hit
+				 * property is triggered.
+				 */
 				for (Character c : enemies) {
 					for (int i = 0; i < c.getProjectiles().size(); i++) {
 						ArrayList<Projectile> enemyProjectiles = (ArrayList<Projectile>) c.getProjectiles();
@@ -239,12 +268,17 @@ public class JavaFramework {
 						}
 					}
 				
+				//Code to determine how many tiles are in our current screen
 				int startX = camera.getX() / tileSize[0];
 				int endX = (camera.getX() + xRes) / tileSize[0];
 				int startY = camera.getY() / tileSize[0];
 				int endY = (camera.getY() + yRes) / tileSize[1];
 				
-				//System.out.printf("%d %d %d %d", startX, endX, startY, endY);
+				/**
+				 * Checks for collisions with the monkey and the floor tile. We add one to endX to account for
+				 * tiles on the edge not seen from our previous initialization. If the monkey is colliding,
+				 * we stop the monkey from jumping, set his velocity to 0, and return him to his previous position.
+				 */
 				for (int i = startX; i < endX + 1; i++) {
 					for (int j = startY; j < endY + 1; j++) {
 						
@@ -261,37 +295,28 @@ public class JavaFramework {
 						}
 					}
 				}
-//				for (int i = startX; i < endX; i++) {
-//					for (int j = startY; j < endY; j++) {
-//						if (bgTileDef2.getTile(i, j) != null) {
-//							AABB tileAABB = new AABB(i * tileSize[0], j * tileSize[1], 75, 75);
-//							boolean coll = AABBIntersect(mainCharAABB, tileAABB);
-//							if (coll) {
-//								spritePos[0] = spritePrevPosX;
-//								spritePos[1] = spritePrevPosY;
-//							}
-//						}
-//					}
-//				}
 				
 				
 				lastPhysicsFrameMs += physicsDeltaMs;
 			} while (lastPhysicsFrameMs + physicsDeltaMs < curFrameMs);
 			
+			//Set the monkey previous coordinates after physics have run.
 			monkeyPreviousX = monkey.getX();
 			monkeyPreviousY = monkey.getY();
 			
-
+			//If an enemy is not visible, then remove it from the enemy arraylist
 			for (int i = 0; i < enemies.size(); i++) {
 				if (!enemies.get(i).getVisible()) {
 					enemies.remove(i);
 				}
 			}
 
-			// Game logic.
 
 			// Enemy Movement
 			shootTimer++;
+			/**
+			 * Snail movement. Tracks the monkey's position
+			 */
 			if (snail.getX() < monkey.getX() && !snail.isShooting()) {
 				snail.setX(snail.getX() + 1);
 				snail.setReverse(true);
@@ -318,10 +343,12 @@ public class JavaFramework {
 				shootTimer = 0;
 			}
 			
-			if (kbState[KeyEvent.VK_ESCAPE]) {
-				shouldExit = true;
-			}
-
+			
+			
+			/**
+			 * Code for dealing with monkey shooting.
+			 */
+			
 			if (!monkey.isShooting()) {
 				if (kbState[KeyEvent.VK_SPACE]) {
 					monkey.addProjectile(new Projectile(monkey.getX() + 20, monkey.getY() + 30, projectileSize[0],
@@ -339,7 +366,11 @@ public class JavaFramework {
 			}
 			
 			
-
+			/**
+			 * If the monkey is not moving or jumping or shooting, then play the standing animation.
+			 * The stand count was added for some weird animation bug
+			 */
+			
 			if (kbState[KeyEvent.VK_D] == false && kbState[KeyEvent.VK_A] == false && !monkey.isShooting() && !monkey.isJumping()) {
 				standCount++;
 				if (standCount > 6) {
@@ -349,6 +380,10 @@ public class JavaFramework {
 				}
 			}
 
+			
+			/**
+			 * Monkey movement code.
+			 */
 			if (kbState[KeyEvent.VK_A] && monkey.getX() > 0 && !monkey.isShooting()) {
 				monkey.setX(monkey.getX() - 3);
 				if (monkey.getX() < camera.getX() + (xRes / 6)) {
@@ -382,17 +417,22 @@ public class JavaFramework {
 			
 			
 
+			/**
+			 * Press W to jump. Change number in set velocity to determine how high monkey jumps.
+			 */
 			if (kbState[KeyEvent.VK_W] && monkey.getY() > 0 && !monkey.isJumping()) {
 				monkey.setJumping(true);
 				monkey.setyVelocity(-7);
 			}
 			
 			
-
+			//Does nothing as of now
 			if (kbState[KeyEvent.VK_S] && monkey.getY() < backgroundMain.getHeight() * tileSize[1] - spriteSize[1]) {
 				// spritePos[1] += 1;
 			}
 
+			
+			//Camera controls
 			if (kbState[KeyEvent.VK_LEFT]) {
 				if (camera.getX() - 1 < 0) {
 					camera.setX(camera.getX());
@@ -421,22 +461,24 @@ public class JavaFramework {
 			// camera.setY(camera.getY() + 1);
 			// }
 
+			//Update bounding box for monkey and camera
 			spriteAABB.setX(monkey.getX());
 			spriteAABB.setY(monkey.getY());
-
 			spriteAABB.setWidth(spriteSize[0]);
 			spriteAABB.setHeight(spriteSize[1]);
 
 			cameraAABB.setX(camera.getX());
 			cameraAABB.setY(camera.getY());
-
 			cameraAABB.setWidth(xRes);
 			cameraAABB.setHeight(yRes);
+			
+			//Check to see what tiles are in bounds of the camera.
 			backgroundCheck = backgroundInBounds(camera.getX(), camera.getY());
 
 			gl.glClearColor(0, 0, 0, 1);
 			gl.glClear(GL2.GL_COLOR_BUFFER_BIT);
 
+			//Draw main background. Last two params for glDrawSprite are for reversing image and making image red.
 			for (int i = backgroundCheck; i < backgroundMain.getWidth(); i++) {
 				for (int j = 0; j < backgroundMain.getHeight(); j++) {
 					if (backgroundMain.getTile(i, j) != null) {
@@ -445,7 +487,7 @@ public class JavaFramework {
 					}
 				}
 			}
-			
+			//Draw floor
 			for (int i = backgroundCheck; i < backgroundFloor.getWidth(); i++) {
 				for (int j = 0; j < backgroundFloor.getHeight(); j++) {
 					if (backgroundFloor.getTile(i, j) != null) {
@@ -454,10 +496,13 @@ public class JavaFramework {
 					}
 				}
 			}
+			//If the camera and the monkey are within each other, then draw monkey
 			if (AABBIntersect(cameraAABB, spriteAABB)) {
 				glDrawSprite(gl, monkeyTex, monkey.getX() - camera.getX(), monkey.getY() - camera.getY(), spriteSize[0],
 						spriteSize[1], monkey.getReverse(), monkey.isHit());
 			}
+			
+			//Draw all enemies inside main camera
 			for (Character c : enemies) {
 				if (c.getVisible()) {
 					if (AABBIntersect(cameraAABB, c.getHitbox())) {
@@ -466,20 +511,26 @@ public class JavaFramework {
 					}
 				}
 			}
-
+			
+			//Draw monkey projectiles
 			ArrayList<Projectile> monkeyProjectiles = (ArrayList<Projectile>) monkey.getProjectiles();
 			for (int i = 0; i < monkeyProjectiles.size(); i++) {
 				Projectile p = monkeyProjectiles.get(i);
 				glDrawSprite(gl, monkeyProjectileTex, p.getX() - camera.getX(), p.getY() - camera.getY(), projectileSize[0],
 						projectileSize[1], false, false);
 			}
+			
+			//Draw snail projectiles
 			ArrayList<Projectile> snailProjectiles = (ArrayList<Projectile>) snail.getProjectiles();
 			for (int i = 0; i < snailProjectiles.size(); i++) {
 				Projectile p = snailProjectiles.get(i);
 				glDrawSprite(gl, snailProjectileTex, p.getX() - camera.getX(), p.getY() - camera.getY(), projectileSize[0],
 						projectileSize[1], false, false);
 			}
-			// Present to the player.
+			
+			if (kbState[KeyEvent.VK_ESCAPE]) {
+				shouldExit = true;
+			}
 		}
 		System.exit(0);
 	}
