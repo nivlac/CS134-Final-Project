@@ -8,7 +8,7 @@
 
 
 # Both:
--Lvl 1(Length, Design)
+Lvl 1(Length, Design)
 -Boss (Design)
 -Import art
 -Add sound(enemies,char, and background music)
