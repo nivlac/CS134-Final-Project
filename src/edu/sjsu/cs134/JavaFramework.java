@@ -109,51 +109,51 @@ public class JavaFramework {
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
 		// Load the texture.
-		monkeyTex = glTexImageTGAFile(gl, "assets/monkey_stand.tga", spriteSize);
-		monkeyStandingTex = glTexImageTGAFile(gl, "assets/monkey_stand.tga", spriteSize);
+		monkeyTex = glTexImageTGAFile(gl, "assets/monkey/monkey_stand.tga", spriteSize);
+		monkeyStandingTex = glTexImageTGAFile(gl, "assets/monkey/monkey_stand.tga", spriteSize);
 
-		enemyTex = glTexImageTGAFile(gl, "assets/snail_stand.tga", spriteSize);
-		enemyStandingTex = glTexImageTGAFile(gl, "assets/snail_stand.tga", spriteSize);
-		enemyShootTex = glTexImageTGAFile(gl, "assets/snail_shoot.tga", spriteSize);
+		enemyTex = glTexImageTGAFile(gl, "assets/snail/snail_stand.tga", spriteSize);
+		enemyStandingTex = glTexImageTGAFile(gl, "assets/snail/snail_stand.tga", spriteSize);
+		enemyShootTex = glTexImageTGAFile(gl, "assets/snail/snail_shoot.tga", spriteSize);
 
-		monkeyProjectileTex = glTexImageTGAFile(gl, "assets/projectile_3.tga", projectileSize);
-		snailProjectileTex = glTexImageTGAFile(gl, "assets/enemy_projectile.tga", projectileSize);
+		monkeyProjectileTex = glTexImageTGAFile(gl, "assets/projectiles/projectile_3.tga", projectileSize);
+		snailProjectileTex = glTexImageTGAFile(gl, "assets/projectiles/enemy_projectile.tga", projectileSize);
 
 		/**
 		 * Putting textures into an Animation Frames array. These arrays are then put into an animation object which
 		 * is called when wanting to retrieve animations.
 		 */
 		AnimationFrames[] running = {
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_run1.tga", spriteSize), (float) 110),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_run2.tga", spriteSize), (float) 100),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_run3.tga", spriteSize), (float) 120),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_run4.tga", spriteSize), (float) 100),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_run5.tga", spriteSize), (float) 110),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_run6.tga", spriteSize), (float) 100),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_run7.tga", spriteSize), (float) 120),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_run8.tga", spriteSize), (float) 100) };
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_run1.tga", spriteSize), (float) 110),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_run2.tga", spriteSize), (float) 100),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_run3.tga", spriteSize), (float) 120),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_run4.tga", spriteSize), (float) 100),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_run5.tga", spriteSize), (float) 110),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_run6.tga", spriteSize), (float) 100),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_run7.tga", spriteSize), (float) 120),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_run8.tga", spriteSize), (float) 100) };
 
 		AnimationFrames[] monkeyShoot = {
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_shoot1.tga", spriteSize), (float) 130),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_shoot2.tga", spriteSize), (float) 80),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_shoot3.tga", spriteSize), (float) 150),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_shoot4.tga", spriteSize), (float) 80) };
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_shoot1.tga", spriteSize), (float) 130),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_shoot2.tga", spriteSize), (float) 80),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_shoot3.tga", spriteSize), (float) 150),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_shoot4.tga", spriteSize), (float) 80) };
 		
 		AnimationFrames[] monkeyJump = {
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_jump1.tga", spriteSize), (float) 50),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_jump2.tga", spriteSize), (float) 75),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_jump3.tga", spriteSize), (float) 1500),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_jump4.tga", spriteSize), (float) 100),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey_jump4.tga", spriteSize), (float) 70) };
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_jump1.tga", spriteSize), (float) 50),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_jump2.tga", spriteSize), (float) 75),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_jump3.tga", spriteSize), (float) 1500),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_jump4.tga", spriteSize), (float) 100),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_jump4.tga", spriteSize), (float) 70) };
 
 		AnimationFrames[] snailMove = {
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail_run1.tga", spriteSize), (float) 100),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail_run2.tga", spriteSize), (float) 100),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail_run3.tga", spriteSize), (float) 100),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail_run4.tga", spriteSize), (float) 100),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail_run5.tga", spriteSize), (float) 100),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail_run6.tga", spriteSize), (float) 100),
-				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail_run7.tga", spriteSize), (float) 100) };
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail/snail_run1.tga", spriteSize), (float) 100),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail/snail_run2.tga", spriteSize), (float) 100),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail/snail_run3.tga", spriteSize), (float) 100),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail/snail_run4.tga", spriteSize), (float) 100),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail/snail_run5.tga", spriteSize), (float) 100),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail/snail_run6.tga", spriteSize), (float) 100),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail/snail_run7.tga", spriteSize), (float) 100) };
 
 		//Animations
 		Animation runAnimation = new Animation(running);
@@ -163,8 +163,8 @@ public class JavaFramework {
 
 
 		// Initialize all of the background textures
-		skyTex = glTexImageTGAFile(gl, "assets/tileSky.tga", tileSize);
-		groundtex = glTexImageTGAFile(gl, "assets/tileGround.tga", tileSize);
+		skyTex = glTexImageTGAFile(gl, "assets/backgrounds/tileSky.tga", tileSize);
+		groundtex = glTexImageTGAFile(gl, "assets/backgrounds/tileGround.tga", tileSize);
 		
 		backgroundMain = new Background(skyTex, true, 0, 150);
 		backgroundFloor = new Background(groundtex, false, 100, 150);
@@ -289,7 +289,7 @@ public class JavaFramework {
 								monkey.setJumping(false);
 								monkey.setyVelocity(0);
 								monkeyJumpAnimation.resetFrames();
-								monkey.setX(monkeyPreviousX);
+								//monkey.setX(monkeyPreviousX);
 								monkey.setY(monkeyPreviousY);
 							}
 						}
@@ -527,6 +527,7 @@ public class JavaFramework {
 				glDrawSprite(gl, snailProjectileTex, p.getX() - camera.getX(), p.getY() - camera.getY(), projectileSize[0],
 						projectileSize[1], false, false);
 			}
+			
 			
 			if (kbState[KeyEvent.VK_ESCAPE]) {
 				shouldExit = true;
