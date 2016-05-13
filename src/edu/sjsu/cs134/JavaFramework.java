@@ -265,6 +265,10 @@ public class JavaFramework {
 								enemyProjectiles.remove(i);
 								monkey.setHit(!monkey.isHit());
 							}
+							//Remove all projectiles
+							if (c.getHealth() <= 0) {
+								enemyProjectiles.clear();
+							}
 						}
 					}
 				
