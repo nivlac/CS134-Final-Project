@@ -14,9 +14,9 @@ public class Character {
 	private List<Projectile> projectiles;
 	AABBCamera hitbox;
 	private boolean reverse, visible, isShooting, isHit, isJumping;
-	private static int currentTexture;
+	private int currentTexture;
 	
-	public Character(int x, int y, int width, int height) {
+	public Character(int x, int y, int width, int height, int tex) {
 		this.x = x;
 		this.y = y;
 		this.health = 3;
@@ -28,6 +28,7 @@ public class Character {
 		isHit = false;
 		acceleration = .2;
 		yVelocity = 0;
+		currentTexture = tex;
 	}
 	
 	public double getyVelocity() {
@@ -118,6 +119,14 @@ public class Character {
 
 	public void setHit(boolean isHit) {
 		this.isHit = isHit;
+	}
+
+	public int getCurrentTexture() {
+		return currentTexture;
+	}
+
+	public void setCurrentTexture(int currentTexture) {
+		this.currentTexture = currentTexture;
 	}
 	
 	
