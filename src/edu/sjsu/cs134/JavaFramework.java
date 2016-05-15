@@ -29,7 +29,7 @@ public class JavaFramework {
 
 	// Position of the sprites.
 	private static int[] spritePos = new int[] { 100, 299 };
-	private static int[] enemyPos = new int[] { 400, 300 };
+	private static int[] enemyPos = new int[] { 400, 400 };
 
 	// Texture for the sprites.
 	private static int monkeyTex;
@@ -263,18 +263,20 @@ public class JavaFramework {
 		int monkeyPreviousX = monkey.getX();
 		int monkeyPreviousY = monkey.getY();
 		int bossPreviousY = boss.getY();
-		boolean bossMode = true;
-		if(bossMode == true){
-			levelWidth = backgroundBossMainA.getWidth();
-			levelHeight = backgroundBossMainA.getHeight();
-			backgroundFloor = backgroundBossFloor;
-		}
+		boolean bossMode = false;
+		
 
 		//Arraylist of enemies since there will be multiple
 		ArrayList<Character> enemies = new ArrayList<Character>();
 		enemies.add(snail);
-		enemies.add(boss);
-		snail.setVisible(false);
+		
+		
+		if(bossMode == true){
+			levelWidth = backgroundBossMainA.getWidth();
+			levelHeight = backgroundBossMainA.getHeight();
+			backgroundFloor = backgroundBossFloor;
+			enemies.add(boss);
+		}
 		// The game loop
 		while (!shouldExit) {
 			lastFrame = currentFrame;
@@ -439,6 +441,7 @@ public class JavaFramework {
 			 * 
 			 */
 			
+			if(bossMode == true){
 			if(boss.getAttackMode() == 0){
 				boss.setTargetX(400);
 				boss.setTargetAcquired(true);
@@ -514,6 +517,7 @@ public class JavaFramework {
 						}
 					}
 				}
+			}
 			}
 			/**
 			 * Code for dealing with monkey shooting.
