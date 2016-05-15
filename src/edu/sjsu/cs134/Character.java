@@ -8,6 +8,7 @@ import java.util.List;
 public class Character {
 	private int x;
 	private int y;
+	private int width, height;
 	private int health;
 	private double yVelocity;
 	private double acceleration;
@@ -29,8 +30,14 @@ public class Character {
 		acceleration = .2;
 		yVelocity = 0;
 		currentTexture = tex;
+		this.width = width;
+		this.height = height;
 	}
 	
+	public void setAcceleration(double acceleration) {
+		this.acceleration = acceleration;
+	}
+
 	public double getyVelocity() {
 		return yVelocity;
 	}
@@ -127,6 +134,22 @@ public class Character {
 
 	public void setCurrentTexture(int currentTexture) {
 		this.currentTexture = currentTexture;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
 	}
 	
 	

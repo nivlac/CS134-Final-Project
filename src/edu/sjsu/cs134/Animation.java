@@ -35,6 +35,15 @@ public class Animation {
 		return animations[currentFrame].getSprite();
 	}
 	
+	public void setCurrentFrame(int frame) {
+		currentFrame = frame;
+		timeRemaining = animations[currentFrame].spriteActiveTime;
+	}
+	
+	public int getFrameNumber() {
+		return currentFrame;
+	}
+	
 	public void resetFrames(){
 		finished = false;
 		currentFrame = 0;

@@ -10,11 +10,12 @@ public class Projectile {
 	private double gravity;
 	private boolean visible;
 	private AABBCamera collisionBox;
+	private boolean reverse;
 	
 	public Projectile(int x, int y, int width, int height, boolean isLeft) {
 		this.width = width;
 		this.height = height;
-		System.out.println(isLeft);
+		reverse = isLeft;
 		if(!isLeft){
 			this.speed = 3;
 			this.x = x;
@@ -78,5 +79,13 @@ public class Projectile {
 		x += speed;
 		distance += speed;
 		collisionBox.setX(x);
+	}
+
+	public boolean isReverse() {
+		return reverse;
+	}
+
+	public void setReverse(boolean reverse) {
+		this.reverse = reverse;
 	}
 }
