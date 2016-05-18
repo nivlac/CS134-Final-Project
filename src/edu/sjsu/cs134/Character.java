@@ -14,7 +14,7 @@ public class Character {
 	private double acceleration;
 	private List<Projectile> projectiles;
 	AABBCamera hitbox;
-	private boolean reverse, visible, isShooting, isHit, isJumping;
+	private boolean reverse, visible, isShooting, isHit, isJumping, invincible;
 	private int currentTexture;
 	
 	public Character(int x, int y, int width, int height, int tex) {
@@ -150,6 +150,14 @@ public class Character {
 
 	public void setWidth(int width) {
 		this.width = width;
+	}
+
+	public boolean isInvincible() {
+		return invincible;
+	}
+
+	public void setInvincible(boolean invincible) {
+		this.invincible = invincible;
 	}
 	
 	

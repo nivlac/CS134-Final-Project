@@ -4,7 +4,7 @@ public class Boss extends Character {
 
 	private int attackMode;
 	private int targetX;
-	private boolean targetAcquired;
+	private boolean targetAcquired, isPunching;
 	public Boss(int x, int y, int width, int height, int tex) {
 		super(x, y, width, height, tex);
 		attackMode = 0;
@@ -29,6 +29,12 @@ public class Boss extends Character {
 	}
 	public void setTargetAcquired(boolean targetAcquired) {
 		this.targetAcquired = targetAcquired;
+	}
+	public boolean isPunching() {
+		return isPunching;
+	}
+	public void setPunching(boolean isPunching) {
+		this.isPunching = isPunching;
 	}
 
 }
