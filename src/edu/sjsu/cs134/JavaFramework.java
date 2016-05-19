@@ -48,6 +48,9 @@ public class JavaFramework {
 	private static int bossSkyTexA;
 	private static int bossSkyTexB;
 	private static int bossGroundtex;
+	private static int platformA;
+	private static int platformB;
+	private static int platformC;
 	
 
 	// Size of the sprite.
@@ -165,10 +168,17 @@ public class JavaFramework {
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_jump4.tga", spriteSize), (float) 100),
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/monkey_jump4.tga", spriteSize), (float) 70) };
 		
+		AnimationFrames[] monkeyPunch = {
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/punch1.tga", spriteSize), (float) 200),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/punch2.tga", spriteSize), (float) 180),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/punch3.tga", spriteSize), (float) 110),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/punch4.tga", spriteSize), (float) 90) };
+		
 		AnimationFrames[] monkeyHurt = {
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/hurt1.tga", spriteSize), (float) 100),
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/hurt2.tga", spriteSize), (float) 140),
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/monkey/hurt3.tga", spriteSize), (float) 110)};
+		
 
 		AnimationFrames[] snailMove = {
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/snail/snail_run1.tga", spriteSize), (float) 100),
@@ -224,11 +234,20 @@ public class JavaFramework {
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/boss/bossstomp2.tga", bossSize), (float) 110),
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/boss/bossstomp3.tga", bossSize), (float) 150),
 				new AnimationFrames(glTexImageTGAFile(gl, "assets/boss/bossstomp4.tga", bossSize), (float) 110)};
+		
+		AnimationFrames[] bossDeath = {
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/boss/bossdie1.tga", bossSize), (float) 500),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/boss/bossdie2.tga", bossSize), (float) 200),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/boss/bossdie3.tga", bossSize), (float) 200),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/boss/bossdie4.tga", bossSize), (float) 200),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/boss/bossdie5.tga", bossSize), (float) 200),
+				new AnimationFrames(glTexImageTGAFile(gl, "assets/boss/bossdie6.tga", bossSize), (float) 500)};
 
 		//Animations
 		Animation runAnimation = new Animation(running);
 		Animation monkeyJumpAnimation = new Animation(monkeyJump);
 		Animation monkeyShootAnimation = new Animation(monkeyShoot);
+		Animation monkeyPunchAnimation = new Animation(monkeyPunch);
 		Animation monkeyHurtAnimation = new Animation(monkeyHurt);
 		Animation snailMoveAnimation = new Animation(snailMove);
 		Animation bossWalkAnimation = new Animation(bossWalk);
@@ -236,6 +255,7 @@ public class JavaFramework {
 		Animation bossTauntAnimation = new Animation(bossTaunt);
 		Animation bossPunchAnimation = new Animation(bossPunch);
 		Animation bossStompAnimation = new Animation(bossStomp);
+		Animation bossDeathAnimation = new Animation(bossDeath);
 
 
 		// Initialize all of the background textures
@@ -244,6 +264,9 @@ public class JavaFramework {
 		bossSkyTexA = glTexImageTGAFile(gl, "assets/backgrounds/cavewall1.tga", tileSize);
 		bossSkyTexB = glTexImageTGAFile(gl, "assets/backgrounds/cavewall2.tga", tileSize);
 		bossGroundtex = glTexImageTGAFile(gl, "assets/backgrounds/cavefloor.tga", tileSize);
+		platformA = glTexImageTGAFile(gl, "assets/platforms/platformleftend.tga", tileSize);
+		platformB = glTexImageTGAFile(gl, "assets/platforms/platform-middle.tga", tileSize);
+		platformC = glTexImageTGAFile(gl, "assets/platforms/platformrightend.tga", tileSize);
 		
 		backgroundMain = new Background(skyTex, true, 0, 180, 30, 20);
 		backgroundFloor = new Background(groundtex, false, 150, 180, 30, 20);
@@ -261,6 +284,10 @@ public class JavaFramework {
 		monkey.getHitbox().setWidth(50);
 		Character snail = new Character(enemyPos[0], enemyPos[1], spriteSize[0], spriteSize[1], enemyTex);
 		Boss boss = new Boss(800, 299, bossSize[0], bossSize[1], bossTex);
+		
+		ArrayList<Platform> platforms = new ArrayList<Platform>();
+		platforms.add(new Platform(500, 200, 7));
+		platforms.add(new Platform(500, 350, 7));
 
 		//Create a bounding box camera for both the monkey and camera
 		AABBCamera spriteAABB = new AABBCamera(spritePos[0], spritePos[1], spriteSize[0], spriteSize[1]);
@@ -288,7 +315,8 @@ public class JavaFramework {
 		int monkeyPreviousX = monkey.getX();
 		int monkeyPreviousY = monkey.getY();
 		int bossPreviousY = boss.getY();
-		boolean bossMode = true;
+		boolean bossMode = false;
+		boolean gameOver = false;
 		
 
 		//Arraylist of enemies since there will be multiple
@@ -354,8 +382,23 @@ public class JavaFramework {
 							mainCharProj.get(i).setVisible(false);
 							mainCharProj.remove(i);
 							c.setHealth(c.getHealth() - 1);
+							c.setHit(!c.isHit());
 							if (c.getHealth() <= 0) {
-								c.setVisible(false);
+								c.setDead(true);
+							}
+						}
+					}
+				}
+				
+				for(Character e : enemies) {
+					if(monkey.isPunching() && (monkeyPunchAnimation.getFrameNumber() == 1 || monkeyPunchAnimation.getFrameNumber() == 2)){
+						if (AABBIntersect(e.getHitbox(), monkey.getHitbox())) {
+							if(!e.isInvincible()){
+							e.setHealth(e.getHealth() - 1);
+							e.setHit(!e.isHit());
+							if (e.getHealth() <= 0) {
+								e.setDead(true);
+							}
 							}
 						}
 					}
@@ -381,7 +424,7 @@ public class JavaFramework {
 							}
 						}
 					if(c instanceof Boss){
-						if(((Boss) c).isPunching() && (bossPunchAnimation.getFrameNumber() == 3 || bossPunchAnimation.getFrameNumber() == 4) && !monkey.isHit()){
+						if(((Boss) c).isPunching() && (bossPunchAnimation.getFrameNumber() == 2 || bossPunchAnimation.getFrameNumber() == 3) && !monkey.isHit()){
 							if (AABBIntersect(c.getHitbox(), monkey.getHitbox())) {
 								if(!monkey.isInvincible()){
 								monkey.setHealth(monkey.getHealth() - 1);
@@ -436,6 +479,33 @@ public class JavaFramework {
 					}
 				}
 				
+				for(Platform platform : platforms){
+					AABBCamera monkeyBox;
+					if(monkey.isJumping()){
+						monkeyBox = new AABBCamera(monkey.getHitbox().getX(), monkey.getHitbox().getY(), monkey.getHitbox().getHeight() - 20, monkey.getHitbox().getWidth());
+						if (AABBIntersect(monkeyBox, platform.getCollisionBox()) && monkey.getyVelocity() > 0) {
+							if(monkeyPreviousY + 80 - platform.getY() < 2){
+							monkey.setJumping(false);
+							monkeyJumpAnimation.resetFrames();
+							monkey.setyVelocity(0);
+							monkey.setY(monkeyPreviousY - 20);
+							}
+						}
+					}
+					else{
+						monkeyBox = monkey.getHitbox();
+						if (AABBIntersect(monkey.getHitbox(), platform.getCollisionBox()) && !kbState[KeyEvent.VK_S]) {
+							if(monkeyPreviousY + 100 - platform.getY() < 2){
+							monkey.setJumping(false);
+							monkeyJumpAnimation.resetFrames();
+							monkey.setyVelocity(0);
+							monkey.setY(monkeyPreviousY);
+							}
+						}
+					}
+					
+				}
+				
 				
 				lastPhysicsFrameMs += physicsDeltaMs;
 			} while (lastPhysicsFrameMs + physicsDeltaMs < curFrameMs);
@@ -448,6 +518,7 @@ public class JavaFramework {
 			//If an enemy is not visible, then remove it from the enemy arraylist
 			for (int i = 0; i < enemies.size(); i++) {
 				if (!enemies.get(i).getVisible()) {
+					enemies.get(i).getProjectiles().clear();
 					enemies.remove(i);
 				}
 			}
@@ -514,15 +585,25 @@ public class JavaFramework {
 				}
 			}
 			else if(boss.getAttackMode() == 1){
-				boss.setCurrentTexture(bossTauntAnimation.getCurrentFrame());
-				bossTauntAnimation.updateSprite(delta);
 				if(bossTauntAnimation.isFinished()){
+					if(boss.isDead() && !bossDeathAnimation.isFinished()){
+						boss.setInvincible(true);
+						boss.setDead(true);
+						boss.setCurrentTexture(bossDeathAnimation.getCurrentFrame());
+						bossDeathAnimation.updateSprite(delta);
+					}
+					else if(!boss.isDead()){
 					boss.setTargetAcquired(false);
 					boss.setJumping(false);
 					bossTauntAnimation.resetFrames();
 					bossJumpAnimation.resetFrames();
 					bossPunchAnimation.resetFrames();
 					boss.setAttackMode(rand.nextInt(3) + 2);
+					}
+				}
+				else{
+					boss.setCurrentTexture(bossTauntAnimation.getCurrentFrame());
+					bossTauntAnimation.updateSprite(delta);
 				}
 			}
 			else if(boss.getAttackMode() == 2){
@@ -538,13 +619,13 @@ public class JavaFramework {
 					System.out.println("yes");
 				}
 				else{
-					if(boss.getTargetX() < boss.getX()){
+					if(boss.getTargetX() < boss.getX() && boss.isJumping()){
 						boss.setReverse(false);
 						boss.setX(boss.getX() - 4);
 						bossJumpAnimation.updateSprite(delta);
 						boss.setCurrentTexture(bossJumpAnimation.getCurrentFrame());
 					}
-					else if(boss.getTargetX() > boss.getX()){
+					else if(boss.getTargetX() > boss.getX() && boss.isJumping()){
 						boss.setReverse(true);
 						boss.setX(boss.getX() + 4);
 						bossJumpAnimation.updateSprite(delta);
@@ -612,7 +693,7 @@ public class JavaFramework {
 				rockTimer++;
 				if(rockTimer == 40){
 					Projectile rock = new Projectile((rand.nextInt(600) + 200), -101, 100,
-							100, true);
+							100, false);
 					rock.setRock(true);
 					rock.setSpeed(5);
 					boss.addProjectile(rock);
@@ -639,15 +720,30 @@ public class JavaFramework {
 			}
 			
 			if(monkey.isInvincible() && !monkey.isHit()){
-				hurtTimer++;
-				if(hurtTimer == 100){
+				monkey.setHurtTimer(monkey.getHurtTimer() + 1);
+				if(monkey.getHurtTimer() == 100){
 					monkey.setInvincible(false);
-					hurtTimer = 0;
+					monkey.setHurtTimer(0);
 				}
 			}
 			
+			for(Character enemy : enemies){
+				if(enemy.isHit()){
+					enemy.setInvincible(true);
+					enemy.setHit(false);
+				}
+				if(enemy.isInvincible() && !enemy.isHit()){
+					enemy.setHurtTimer(enemy.getHurtTimer() + 1);
+					if(enemy.getHurtTimer() == 30){
+						enemy.setInvincible(false);
+						enemy.setHurtTimer(0);
+					}
+				}
+				
+			}
+			
 			if (!monkey.isShooting()) {
-				if (kbState[KeyEvent.VK_SPACE] && !monkey.isHit()) {
+				if (kbState[KeyEvent.VK_SHIFT] && !monkey.isHit()) {
 					monkey.addProjectile(new Projectile(monkey.getX() + 20, monkey.getY() + 20, projectileSize[0],
 							projectileSize[1], monkey.getReverse()));
 					monkey.setShooting(true);
@@ -662,13 +758,27 @@ public class JavaFramework {
 				}
 			}
 			
+			if(!monkey.isShooting()){
+				if (kbState[KeyEvent.VK_SPACE] && !monkey.isHit() && !monkey.isPunching()) {
+					monkey.setPunching(true);
+				}
+				else if(monkey.isPunching()){
+					monkeyPunchAnimation.updateSprite(delta);
+					monkey.setCurrentTexture(monkeyPunchAnimation.getCurrentFrame());
+					if(monkeyPunchAnimation.isFinished()){
+						monkeyPunchAnimation.resetFrames();
+						monkey.setPunching(false);
+					}
+				}
+			}
+			
 			
 			/**
 			 * If the monkey is not moving or jumping or shooting, then play the standing animation.
 			 * The stand count was added for some weird animation bug
 			 */
 			
-			if (kbState[KeyEvent.VK_D] == false && kbState[KeyEvent.VK_A] == false && !monkey.isShooting() && !monkey.isJumping() && !monkey.isHit()) {
+			if (kbState[KeyEvent.VK_D] == false && kbState[KeyEvent.VK_A] == false && !monkey.isShooting() && !monkey.isJumping() && !monkey.isHit() && !monkey.isPunching()) {
 				standCount++;
 				if (standCount > 6) {
 					runAnimation.resetFrames();
@@ -691,7 +801,7 @@ public class JavaFramework {
 					}
 				}
 				monkey.setReverse(true);
-				if(!monkey.isJumping()){
+				if(!monkey.isJumping() && !monkey.isPunching()){
 				runAnimation.updateSprite(delta);
 				monkey.setCurrentTexture(runAnimation.getCurrentFrame());
 				}
@@ -706,7 +816,7 @@ public class JavaFramework {
 					}
 				}
 				monkey.setReverse(false);
-				if(!monkey.isJumping()){
+				if(!monkey.isJumping() && !monkey.isPunching()){
 				runAnimation.updateSprite(delta);
 				monkey.setCurrentTexture(runAnimation.getCurrentFrame());
 				}
@@ -726,7 +836,7 @@ public class JavaFramework {
 			
 			//Does nothing as of now
 			if (kbState[KeyEvent.VK_S] && monkey.getY() < backgroundMain.getHeight() * tileSize[1] - spriteSize[1]) {
-				// spritePos[1] += 1;
+				//monkey.setJumping(true);
 			}
 
 			
@@ -745,12 +855,12 @@ public class JavaFramework {
 					camera.setX(camera.getX() + 1);
 				}
 			}
-			// if (kbState[KeyEvent.VK_UP]) {
-			// if (camera.getY() - 1 < 0) {
-			// camera.setY(camera.getY());
-			// } else
-			// camera.setY(camera.getY() - 1);
-			// }
+//			 if (kbState[KeyEvent.VK_UP]) {
+//			 if (camera.getY() - 1 < 0) {
+//			 camera.setY(camera.getY());
+//			 } else
+//			 camera.setY(camera.getY() - 1);
+//			 }
 			// if (kbState[KeyEvent.VK_DOWN]) {
 			// if (camera.getY() + 1 > tileSize[1] * background.getHeight() -
 			// yRes) {
@@ -816,12 +926,29 @@ public class JavaFramework {
 				}
 			}
 			
+			//Draw platforms
+			for (Platform platform : platforms) {
+				System.out.println(platform.getCollisionBox().getX());
+				if (AABBIntersect(cameraAABB, platform.getCollisionBox())) {
+					glDrawSprite(gl, platformA, platform.getX() - camera.getX(), platform.getY() - camera.getY(), tileSize[0],
+							tileSize[1], false, false);
+					for(int i = 0; i < platform.getLength() - 2; i++){
+						glDrawSprite(gl, platformB, platform.getX() + (100 * (i+1)) - camera.getX(), platform.getY() - camera.getY(), tileSize[0],
+								tileSize[1], false, false);
+					}
+					
+					glDrawSprite(gl, platformC, platform.getX() + (100 * (platform.getLength() - 1)) - camera.getX(), platform.getY() - camera.getY(), tileSize[0],
+							tileSize[1], false, false);
+				}
+			
+		}
+			
 			//Draw all enemies inside main camera
 			for (Character c : enemies) {
 				if (c.getVisible()) {
 					if (AABBIntersect(cameraAABB, c.getHitbox())) {
 						glDrawSprite(gl, c.getCurrentTexture(), c.getX() - camera.getX(), c.getY() - camera.getY(), c.getWidth(),
-								c.getHeight(), c.getReverse(), false);
+								c.getHeight(), c.getReverse(), c.isInvincible() && !c.isDead());
 					}
 				}
 			}

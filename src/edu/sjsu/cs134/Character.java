@@ -9,12 +9,12 @@ public class Character {
 	private int x;
 	private int y;
 	private int width, height;
-	private int health;
+	private int health, hurtTimer;
 	private double yVelocity;
 	private double acceleration;
 	private List<Projectile> projectiles;
 	AABBCamera hitbox;
-	private boolean reverse, visible, isShooting, isHit, isJumping, invincible;
+	private boolean reverse, visible, isShooting, isHit, isJumping, invincible, isPunching, isDead;
 	private int currentTexture;
 	
 	public Character(int x, int y, int width, int height, int tex) {
@@ -27,8 +27,12 @@ public class Character {
 		reverse = false;
 		isShooting = false;
 		isHit = false;
+		setDead(false);
 		acceleration = .2;
 		yVelocity = 0;
+		hurtTimer = 0;
+		invincible = false;
+		isPunching = false;
 		currentTexture = tex;
 		this.width = width;
 		this.height = height;
@@ -158,6 +162,30 @@ public class Character {
 
 	public void setInvincible(boolean invincible) {
 		this.invincible = invincible;
+	}
+
+	public boolean isPunching() {
+		return isPunching;
+	}
+
+	public void setPunching(boolean isPunching) {
+		this.isPunching = isPunching;
+	}
+
+	public int getHurtTimer() {
+		return hurtTimer;
+	}
+
+	public void setHurtTimer(int hurtTimer) {
+		this.hurtTimer = hurtTimer;
+	}
+
+	public boolean isDead() {
+		return isDead;
+	}
+
+	public void setDead(boolean isDead) {
+		this.isDead = isDead;
 	}
 	
 	
