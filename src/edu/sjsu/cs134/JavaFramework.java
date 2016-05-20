@@ -3,7 +3,6 @@ package edu.sjsu.cs134;
 
 import com.jogamp.nativewindow.WindowClosingProtocol;
 import com.jogamp.opengl.*;
-
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.opengl.GLWindow;
@@ -16,6 +15,8 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Random;
+
+import javax.sound.sampled.Clip;
 
 public class JavaFramework {
 	// Set this to true to force the game to exit.
@@ -434,7 +435,16 @@ public class JavaFramework {
 		enemies.add(new Mole(400, 400, spriteSize[0], spriteSize[1], molePopup[0].getSprite(),
 				new Animation(moleBury), new Animation(molePopup), new Animation(moleShock), new Animation(moleDie)));
 
-		
+		//Sound
+		Sound soundMain = Sound.loadFromFile("assets/sound/Sound_Main.wav");
+        Sound soundBoss = Sound.loadFromFile("assets/sound/Sound_Boss.wav");
+        
+        //Load empty
+    	Clip bgClip = soundMain.playLooping();
+    	Clip bossClip = null; 
+    	
+        boolean bgPlaying = false;
+        
 		// The game loop
 		while (!shouldExit) {
 			lastFrame = currentFrame;
@@ -446,7 +456,17 @@ public class JavaFramework {
 				shouldExit = true;
 				break;
 			}
+			
+			//Play bg sounds
+			if(bossMode == true){
+				if(!bgPlaying){	
+					bossClip = soundBoss.playLooping();
+					//bossClip.start();
+					bgPlaying = true;
+				}
+			}
 
+			
 			currentFrame = System.nanoTime();
 			curFrameMs = currentFrame / 1000000;
 			long delta = (currentFrame - lastFrame) / 1000000;
@@ -475,12 +495,25 @@ public class JavaFramework {
 				camera.setY(0);
 				platforms.clear();
 				bossInit = false;
+				bgClip.setMicrosecondPosition(0);
+				bgClip.stop();
+				bgPlaying = false;
 				bossMode = true;
 				}
 			}
 			System.out.println(boss.getX());
 			if(gameOver == true){
 				enemies.clear();
+				//bossClip is null if never reached the boss
+				if(bossClip != null){
+					bossClip.setMicrosecondPosition(0);
+					bossClip.stop();
+				}
+				
+				//Reset the song
+				bgClip.setMicrosecondPosition(0);
+				bgClip.stop();
+				bgClip = soundMain.playLooping();
 				enemies.add(new Snail(enemyPos[0] + 200, enemyPos[1], spriteSize[0], spriteSize[1], enemyTex,
 						new Animation(snailMove), new Animation(snailDie)));
 				enemies.add(new Snail(enemyPos[0] + 1000, enemyPos[1], spriteSize[0], spriteSize[1], enemyTex,
