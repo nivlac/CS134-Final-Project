@@ -11,7 +11,7 @@ public class Boss extends Character {
 		targetX = x;
 		targetAcquired = false;
 		setAcceleration(.15);
-		setHealth(20);
+		setHealth(30);
 	}
 	public int getAttackMode() {
 		return attackMode;

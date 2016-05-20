@@ -12,9 +12,10 @@ public class Character {
 	private int health, hurtTimer;
 	private double yVelocity;
 	private double acceleration;
+	private int boxXoffset;
 	private List<Projectile> projectiles;
 	AABBCamera hitbox;
-	private boolean reverse, visible, isShooting, isHit, isJumping, invincible, isPunching, isDead;
+	private boolean reverse, visible, isShooting, isHit, isJumping, invincible, isPunching, isDead, isCelebrating;
 	private int currentTexture;
 	
 	public Character(int x, int y, int width, int height, int tex) {
@@ -31,8 +32,10 @@ public class Character {
 		acceleration = .2;
 		yVelocity = 0;
 		hurtTimer = 0;
+		boxXoffset = 0;
 		invincible = false;
 		isPunching = false;
+		isCelebrating = false;
 		currentTexture = tex;
 		this.width = width;
 		this.height = height;
@@ -76,7 +79,7 @@ public class Character {
 
 	public void setX(int x) {
 		this.x = x;
-		hitbox.setX(x);
+		hitbox.setX(x + boxXoffset);
 	}
 
 	public int getY() {
@@ -186,6 +189,22 @@ public class Character {
 
 	public void setDead(boolean isDead) {
 		this.isDead = isDead;
+	}
+
+	public int getBoxXoffset() {
+		return boxXoffset;
+	}
+
+	public void setBoxXoffset(int boxXoffset) {
+		this.boxXoffset = boxXoffset;
+	}
+
+	public boolean isCelebrating() {
+		return isCelebrating;
+	}
+
+	public void setCelebrating(boolean isCelebrating) {
+		this.isCelebrating = isCelebrating;
 	}
 	
 	

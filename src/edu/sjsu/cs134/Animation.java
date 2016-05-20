@@ -21,12 +21,12 @@ public class Animation {
 
 	public void updateSprite(float deltaTime) {
 		timeRemaining -= deltaTime;
-		if (currentFrame >= animations.length - 1) {
-			finished = true;
-			currentFrame = 0;
-		}
 		if (timeRemaining <= 0) {
 			currentFrame++;
+			if (currentFrame > animations.length - 1) {
+				finished = true;
+				currentFrame = 0;
+			}
 			timeRemaining = animations[currentFrame].spriteActiveTime;
 		}
 	}
